@@ -1,15 +1,22 @@
-//
-//  main.cpp
-//  Labo6
-//
-//  Created by Robin Reuteler on 28.11.18.
-//  Copyright © 2018 RobinReuteler. All rights reserved.
-//
+/* ---------------------------
+ Laboratoire : 6
+ Fichier :     main.cpp
+ Auteur(s) :
+ Date :        28.11.2018
+ 
+ But :
+ 
+ Remarque(s) :
+ 
+ Compilateur : GNU GCC Compiler
+ --------------------------- */
 
 #include <iostream>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+using namespace std;
+
+int main() {
+
+    
     return 0;
 }

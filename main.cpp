@@ -12,75 +12,76 @@
  --------------------------- */
 
 #include <iostream>
+#include <string>
 
 using namespace std;
 
 string getStringUnits(const int& units) {
-   switch(units){
-      case 1 : 
-         return "un";
-         break;
-      case 2 : 
-         return "deux";
-         break;
-      case 3: 
-         return "trois";
-         break;
-      case 4 : 
-         return "quatre";
-         break;
-      case 5: 
-         return "cinq";
-         break;
-      case 6: 
-         return "six";
-         break;
-      case 7: 
-         return "sept";
-         break;
-      case 8: 
-         return "huit";
-         break;
-      case 9: 
-         return "neuf";
-         break;
-       default :
-           return "";
-   }
+    switch(units){
+        case 1 :
+            return "un";
+            break;
+        case 2 :
+            return "deux";
+            break;
+        case 3:
+            return "trois";
+            break;
+        case 4 :
+            return "quatre";
+            break;
+        case 5:
+            return "cinq";
+            break;
+        case 6:
+            return "six";
+            break;
+        case 7:
+            return "sept";
+            break;
+        case 8:
+            return "huit";
+            break;
+        case 9:
+            return "neuf";
+            break;
+        default :
+            return "";
+    }
 }
 
 string getStringTens(const int& tens) {
-   switch(tens){
-      case 1 :
-         return "dix";
-         break;
-      case 2 :
-         return "vingt";
-         break;
-      case 3:
-         return "trente";
-         break;
-      case 4 :
-         return "quarante";
-         break;
-      case 5 :
-         return "cinquante";
-         break;
-      case 6 :
-         return "soixante";
-         break;
-      case 7 :
-         return "septante";
-         break;
-      case 8 :
-         return "huitante";
-         break;
-      case 9 :
-         return "nonante";
-         break;
-       default :
-           return "";
-   }
+    switch(tens){
+        case 1 :
+            return "dix";
+            break;
+        case 2 :
+            return "vingt";
+            break;
+        case 3:
+            return "trente";
+            break;
+        case 4 :
+            return "quarante";
+            break;
+        case 5 :
+            return "cinquante";
+            break;
+        case 6 :
+            return "soixante";
+            break;
+        case 7 :
+            return "septante";
+            break;
+        case 8 :
+            return "huitante";
+            break;
+        case 9 :
+            return "nonante";
+            break;
+        default :
+            return "";
+    }
 }
 
 string getStringTeens(const int& teens)
@@ -109,90 +110,102 @@ string getStringTeens(const int& teens)
     }
 }
 
-string getStringHundreds(const int& hundreds) {
-   string result = "cent";
-   if (hundreds > 1) {
-      result = getStringUnits(hundreds) + " " + result;
-   }
-   return result;
+string getStringHundreds(const unsigned& hundreds) {
+    string result = "cent";
+    if (hundreds > 1) {
+        result = getStringUnits(hundreds) + " " + result;
+    }
+    return result;
 }
 
-/*void displayDigit(const int& num, const int& digitIndex)*/
+string getTensAndUnits(int num)
+{
+    string result = "";
+    if (10 < num and num < 17)
+    {
+        result = getStringTeens(num) + " " + result;
+    }
+    else
+    {
+        int units = num % 10;
+        if (units)
+        {
+            result = getStringUnits(units) + " " + result;
+        }
+        num /= 10;
+        
+        int tens = num % 10;
+        if (tens)
+        {
+            string strTens = getStringTens(tens);
+            if(units == 1)
+            {
+                strTens += " et ";
+            }
+            else
+            {
+                if(units)
+                {
+                    strTens += "-";
+                }
+                else
+                {
+                    strTens += " ";
+                }
+            }
+            result = strTens + result;
+        }
+    }
+    return result;
+}
 
-string getStringEntierPart(unsigned number) {
-   string result = "";
-   
-   
-   unsigned i = 0;
-   while (number) {
-       
-       unsigned units;
-       string strUnits;
-       unsigned tens;
-       string strTens;
-       unsigned hundreds;
-       string strHundreds;
-       unsigned temp;
-       string strTeens;
-       
-      temp = number % 1000;
-       
-       if (i)
-       {
-           result = "mille " + result;
-       }
-       
-       int tensAndUnits = temp % 100;
-      if (10 < tensAndUnits and tensAndUnits < 17)
-      {
-          strTeens = getStringTeens(tensAndUnits);
-          temp /= 100;
-          result = strTeens + " " + result;
-      }
-       else
-       {
-           units = temp % 10;
-           if (units and not((i) and (temp == 1)))//Exclure le cas "un mille"
-           {
-               strUnits = getStringUnits(units);
-               result = strUnits + " " + result;
-           }
-           temp /= 10;
-           
-           tens = temp % 10;
-           if (tens)
-           {
-               strTens = getStringTens(tens);
-               if(units == 1)
-               {
-                   strTens += " et ";
-               }
-               else
-               {
-                   strTens += "-";
-               }
-               result = strTens + result;
-           }
-           temp /= 10;
-       }
+string getStringIntPart(unsigned number) {
+    string result = "";
     
-      hundreds = temp % 10;
-       if (hundreds)
-       {
-           strHundreds = getStringHundreds(hundreds);
-           result = strHundreds + " " + result;
-       }
-      temp /= 10;
-      number /= 1000;
-       ++i;
-   }
-   
-   return result;
+    if(not(number))
+    {
+        result += "zero ";
+    }
+    else
+    {
+        bool  thousands = 0;
+        unsigned temp = number;
+        while (temp) {
+            if (thousands)
+            {
+                result = "mille " + result;
+            }
+            unsigned tensAndUnits = temp % 100;
+            result = getTensAndUnits(tensAndUnits) + result;
+            unsigned hundreds;
+            
+            string strHundreds;
+            hundreds = (temp%1000) / 100;
+            if (hundreds)
+            {
+                strHundreds = getStringHundreds(hundreds);
+                if (not(tensAndUnits) and not(thousands) and hundreds != 1)
+                {
+                    strHundreds += "s";
+                }
+                result = strHundreds + " " + result;
+            }
+            temp /= 1000;
+            thousands = 1;
+        }
+    }
+    number <= 1 ? result += "franc " : result += "francs ";
+    return result;
 }
 
-void displayDecimalPart(const int& num) {
-
+string getStringDecimalPart(unsigned number)
+{
+    string result = getTensAndUnits(number);
+    result += number == 1 ? "centime " : "centimes";
+    return result;
 }
+
+
 
 /**
  @brief Traduit des nombres réels en prix exprimés en vaudois
@@ -208,32 +221,38 @@ void displayDecimalPart(const int& num) {
  0      -> "zéro franc"
  */
 string montantEnVaudois(double montant) {
-   int entierPart = (int) montant;
-   double decimalPart = montant - entierPart;
-   int decimalPartAsInteger = decimalPart * 100 + 0.05; // Added 0.05 to round in a good way
-   
-   string entierPartRepresentationAsString = getStringEntierPart(entierPart);
-   string decimalRepresentationAsString = getStringEntierPart(decimalPartAsInteger);
-   string finalRepresentation;
-   
-   finalRepresentation = entierPartRepresentationAsString;
-   // Add the xy "et" xy "centime(s)" only if we have a decimal part
-   if(!decimalRepresentationAsString.empty()){
-      // Plurals management
-      string centsAsString = (decimalPartAsInteger > 1) ? "centimes" : "centime";
-      finalRepresentation = finalRepresentation + "et" + decimalRepresentationAsString + centsAsString;
-   }
-
-   return finalRepresentation;
-}
-
-int main() {
-
-   double d;
-
-   while (cin >> d) {
-      cout << montantEnVaudois(d) << endl;
-   }
-
-   return 0;
+    /*int intPart = (int) montant;
+    double decimalPart = montant - intPart;
+    int decimalPartAsInt = decimalPart * 100 + 0.05; // Added 0.05 to round in a good way
+    
+    string strIntPart = getStringIntPart(intPart);
+    string strDecimalPart = getTensAndUnits(decimalPartAsInt);
+    string finalRepresentation;
+    
+    finalRepresentation = strIntPart;
+    // Add the xy "et" xy "centime(s)" only if we have a decimal part
+    if(!strDecimalPart.empty() || decimalPart != 0){
+        finalRepresentation += (intPart > 0) ? "et " : "";
+        finalRepresentation += strDecimalPart;
+        finalRepresentation += (decimalPartAsInt > 1) ? "centimes" : "centime";
+    }
+    
+    return finalRepresentation;*/
+    
+    string result = "";
+    if(montant)
+    {
+        int intPart = (int) montant;
+        int decimalPart = 100*(montant - intPart)+ 0.05;
+        
+        result += intPart ? getStringIntPart(intPart) : "";
+        result += intPart and decimalPart ? "et " : "";
+        result += decimalPart ? getStringDecimalPart(decimalPart) : "";
+    }
+    else
+    {
+        result = "zero franc";
+    }
+    
+    return result;
 }

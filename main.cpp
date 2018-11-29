@@ -210,8 +210,21 @@ void displayDecimalPart(const int& num) {
 string montantEnVaudois(double montant) {
    int entierPart = (int) montant;
    double decimalPart = montant - entierPart;
+   int decimalPartAsInteger = decimalPart * 100 + 0.05; // Added 0.05 to round in a good way
+   
+   string entierPartRepresentationAsString = getStringEntierPart(entierPart);
+   string decimalRepresentationAsString = getStringEntierPart(decimalPartAsInteger);
+   string finalRepresentation;
+   
+   finalRepresentation = entierPartRepresentationAsString;
+   // Add the xy "et" xy "centime(s)" only if we have a decimal part
+   if(!decimalRepresentationAsString.empty()){
+      // Plurals management
+      string centsAsString = (decimalPartAsInteger > 1) ? "centimes" : "centime";
+      finalRepresentation = finalRepresentation + "et" + decimalRepresentationAsString + centsAsString;
+   }
 
-   return getStringEntierPart(entierPart);
+   return finalRepresentation;
 }
 
 int main() {

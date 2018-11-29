@@ -112,7 +112,7 @@ string getStringTeens(const int& teens)
 
 string getStringHundreds(const unsigned& hundreds) {
     string result = "cent";
-    if (hundreds > 1) {
+    if (hundreds > 1) {//Pas de "un cent"
         result = getStringUnits(hundreds) + " " + result;
     }
     return result;
@@ -121,7 +121,7 @@ string getStringHundreds(const unsigned& hundreds) {
 string getTensAndUnits(int num)
 {
     string result = "";
-    if (10 < num and num < 17)
+    if (10 < num and num < 17)//Onze, Douze etc.
     {
         result = getStringTeens(num) + " " + result;
     }
@@ -130,21 +130,21 @@ string getTensAndUnits(int num)
         int units = num % 10;
         if (units)
         {
-            result = getStringUnits(units) + " " + result;
+            result = getStringUnits(units) + " " + result;//Unités
         }
         num /= 10;
         
         int tens = num % 10;
         if (tens)
         {
-            string strTens = getStringTens(tens);
-            if(units == 1)
+            string strTens = getStringTens(tens);//Dizaines
+            if(units == 1)//20 et 1 mais pas 20 et 2 par exemple
             {
                 strTens += " et ";
             }
             else
             {
-                if(units)
+                if(units)//trente-quatre par exemple
                 {
                     strTens += "-";
                 }
@@ -168,7 +168,7 @@ string getStringIntPart(unsigned number) {
     }
     else
     {
-        bool  thousands = 0;
+        bool  thousands = 0;//Somme-nous dans les milliers ?
         unsigned temp = number;
         while (temp) {
             if (thousands)
@@ -176,32 +176,35 @@ string getStringIntPart(unsigned number) {
                 result = "mille " + result;
             }
             unsigned tensAndUnits = temp % 100;
-            result = getTensAndUnits(tensAndUnits) + result;
-            unsigned hundreds;
+            if (not(thousands and tensAndUnits == 1))//Pas de "un mille"
+            {
+                result = getTensAndUnits(tensAndUnits) + result;//Gestion des dizaines et unités en bloc
+            }
             
+            unsigned hundreds;
             string strHundreds;
             hundreds = (temp%1000) / 100;
             if (hundreds)
             {
                 strHundreds = getStringHundreds(hundreds);
-                if (not(tensAndUnits) and not(thousands) and hundreds != 1)
+                if (not(tensAndUnits) and not(thousands) and hundreds != 1)//On accorde uniquement si rien ne suit
                 {
-                    strHundreds += "s";
+                    strHundreds += "s";//Accord du "cent"
                 }
                 result = strHundreds + " " + result;
             }
-            temp /= 1000;
-            thousands = 1;
+            temp /= 1000;//Groupe de 3 chiffres suivant
+            thousands = 1;//On passe au milier (à modulariser ?)
         }
     }
-    number <= 1 ? result += "franc " : result += "francs ";
+    number <= 1 ? result += "franc " : result += "francs ";//Accord pluriel
     return result;
 }
 
 string getStringDecimalPart(unsigned number)
 {
     string result = getTensAndUnits(number);
-    result += number == 1 ? "centime " : "centimes";
+    result += number == 1 ? "centime " : "centimes";//Accord pluriel
     return result;
 }
 
@@ -243,16 +246,25 @@ string montantEnVaudois(double montant) {
     if(montant)
     {
         int intPart = (int) montant;
-        int decimalPart = 100*(montant - intPart)+ 0.05;
+        int decimalPart = 100*(montant - intPart)+ 0.05;//Pour une partie décimale (mantisse) correctement arrondie
         
-        result += intPart ? getStringIntPart(intPart) : "";
-        result += intPart and decimalPart ? "et " : "";
-        result += decimalPart ? getStringDecimalPart(decimalPart) : "";
+        result += intPart ? getStringIntPart(intPart) : "";//Partie entière
+        result += (intPart and decimalPart) ? "et " : "";//Connecteur
+        result += decimalPart ? getStringDecimalPart(decimalPart) : "";//Partie décimale
     }
     else
     {
-        result = "zero franc";
+        result = "zero franc";//Cas du zéro
     }
-    
     return result;
+}
+
+int main()
+{
+    double d;
+    
+    while( cin >> d ) {
+        cout << montantEnVaudois(d) << endl;
+    }
+    return 0;
 }

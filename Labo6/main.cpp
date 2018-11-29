@@ -44,38 +44,42 @@ string getStringUnits(const int& units) {
       case 9: 
          return "neuf";
          break;
+       default :
+           return "";
    }
 }
 
 string getStringTens(const int& tens) {
    switch(tens){
-      case 10 : 
+      case 1 :
          return "dix";
          break;
-      case 20 : 
+      case 2 :
          return "vingt";
          break;
-      case 30: 
+      case 3:
          return "trente";
          break;
-      case 40 : 
+      case 4 :
          return "quarante";
          break;
-      case 50 : 
+      case 5 :
          return "cinquante";
          break;
-      case 60 : 
+      case 6 :
          return "soixante";
          break;
-      case 70 : 
+      case 7 :
          return "septante";
          break;
-      case 80 : 
+      case 8 :
          return "huitante";
          break;
-      case 90 : 
+      case 9 :
          return "nonante";
          break;
+       default :
+           return "";
    }
 }
 
@@ -91,37 +95,52 @@ string getStringHundreds(const int& hundreds) {
 
 string getStringEntierPart(unsigned number) {
    string result = "";
-   unsigned units;
-   string strUnits;
-   unsigned tens;
-   string strTens;
-   unsigned hundreds;
-   string strHundreds;
-   unsigned temp;
+   
    
    unsigned i = 0;
    while (number) {
-      temp = number;
+       
+       unsigned units;
+       string strUnits;
+       unsigned tens;
+       string strTens;
+       unsigned hundreds;
+       string strHundreds;
+       unsigned temp;
+       
+      temp = number % 1000;
       
       units = temp % 10;
-      strUnits = getStringUnits(units);
-      temp /= 10;
+       if (units and not((i) and (temp == 1)))//Exclure le cas "un mille"
+       {
+           strUnits = getStringUnits(units);
+       }
+       temp /= 10;
       
-      
-      tens = (temp % 10) * 10;
-      strTens = getStringTens(tens);
-      temp /= 10;
+      tens = temp % 10;
+       if (tens)
+       {
+           strTens = getStringTens(tens);
+       }
+       temp /= 10;
       
       hundreds = temp % 10;
-      strHundreds = getStringHundreds(hundreds);
+       if (hundreds)
+       {
+           strHundreds = getStringHundreds(hundreds);
+       }
       temp /= 10;
       
+       if (i)
+       {
+           result = "mille " + result;
+       }
       result = strUnits + " " + result;
       result = strTens + " " + result;
       result = strHundreds + " " + result;
       
       number /= 1000;
-
+       ++i;
    }
    
    return result;

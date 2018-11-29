@@ -156,14 +156,22 @@ string getStringEntierPart(unsigned number) {
            {
                strUnits = getStringUnits(units);
                result = strUnits + " " + result;
-           }           
+           }
            temp /= 10;
            
            tens = temp % 10;
            if (tens)
            {
                strTens = getStringTens(tens);
-               result = strTens + " " + result;
+               if(units == 1)
+               {
+                   strTens += " et ";
+               }
+               else
+               {
+                   strTens += "-";
+               }
+               result = strTens + result;
            }
            temp /= 10;
        }
@@ -175,12 +183,6 @@ string getStringEntierPart(unsigned number) {
            result = strHundreds + " " + result;
        }
       temp /= 10;
-      
-       
-      
-      
-      
-      
       number /= 1000;
        ++i;
    }

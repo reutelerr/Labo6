@@ -113,87 +113,123 @@ string getStringTeens(const int& teens) {
    }
 }
 
+/**
+ @brief Récupère un chiffre et l'exprime comme un nombre de centaines
+ @param[in] hundreds un entier compris entre 1 et 9.
+ @return une chaine de caractères exprimant le chiffre en centaines.
+ @details Exemples:
+ 3  -> "trois cent"
+ 1 -> "cent"
+ */
 string getStringHundreds(const unsigned& hundreds) {
-   string result = "cent";
-   if (hundreds > 1) {//Pas de "un cent"
-      result = getStringUnits(hundreds) + " " + result;
-   }
-   return result;
+    string result = "cent";
+    if (hundreds > 1) {//Pas de "un cent"
+        result = getStringUnits(hundreds) + " " + result;
+    }
+    return result;
 }
 
-string getTensAndUnits(int num) {
-   string result;
-   if (10 < num and num < 17)//Onze, Douze etc.
-   {
-      result = getStringTeens(num) + " " + result;
-   } else {
-      int units = num % 10;
-      if (units) {
-         result = getStringUnits(units) + " " + result; //Unités
-      }
-      num /= 10;
-
-      int tens = num % 10;
-      if (tens) {
-         string strTens = getStringTens(tens); //Dizaines
-         if (units == 1)//20 et 1 mais pas 20 et 2 par exemple
-         {
-            strTens += " et ";
-         } else {
-            if (units)//trente-quatre par exemple
+/**
+ @brief Récupère deux chiffres et les exprime comme dizaines et unités en vaudois
+ @param[in] num un entier compris entre 0 et 99.
+ @return une chaine de caractères exprimant le nombre en vaudois.
+ @details Exemples:
+ 30  -> "trente"
+ 1 -> "un"
+ 21 -> "vingt et un"
+ 45 -> "quarante cinq"
+ 13 -> "treize"
+ */
+string getTensAndUnits(unsigned num) {
+    string result;
+    if (10 < num and num < 17)//Onze, Douze etc.
+    {
+        result = getStringTeens(num) + " " + result;
+    } else {
+        unsigned units = num % 10;
+        if (units) {
+            result = getStringUnits(units) + " " + result; //Unités
+        }
+        num /= 10;
+        
+        unsigned tens = num % 10;
+        if (tens) {
+            string strTens = getStringTens(tens); //Dizaines
+            if (units == 1)//20 et 1 mais pas 20 et 2 par exemple
             {
-               strTens += "-";
+                strTens += " et ";
             } else {
-               strTens += " ";
+                if (units)//trente-quatre par exemple
+                {
+                    strTens += "-";
+                } else {
+                    strTens += " ";
+                }
             }
-         }
-         result = strTens + result;
-      }
-   }
-   return result;
+            result = strTens + result;
+        }
+    }
+    return result;
 }
 
+/**
+ @brief Récupère la partie entière et l'exprime en "Vaudois"
+ @param[in] number un entier compris entre 0 et 999'999.
+ @return une chaine de caractères exprimant en vaudois le nombre de francs.
+ @details Exemples:
+ 30  -> "trente francs"
+ 100 -> "cent francs"
+ 300000 -> "trois cent mille francs"
+*/
 string getStringIntPart(unsigned number) {
-   string result;
-
-   if (not(number)) {
-      result += "zero ";
-   } else {
-      bool thousands = 0; //Somme-nous dans les milliers ?
-      unsigned temp = number;
-      while (temp) {
-         if (thousands) {
-            result = "mille " + result;
-         }
-         unsigned tensAndUnits = temp % 100;
-         if (not(thousands and tensAndUnits == 1))//Pas de "un mille"
-         {
-            result = getTensAndUnits(tensAndUnits) + result; //Gestion des dizaines et unités en bloc
-         }
-
-         unsigned hundreds;
-         string strHundreds;
-         hundreds = (temp % 1000) / 100;
-         if (hundreds) {
-            strHundreds = getStringHundreds(hundreds);
-            if (not(tensAndUnits) and not(thousands) and hundreds != 1)//On accorde uniquement si rien ne suit
-            {
-               strHundreds += "s"; //Accord du "cent"
+    string result;
+    
+    if (not(number)) {
+        result += "zero ";
+    } else {
+        bool thousands = 0; //Somme-nous dans les milliers ?
+        unsigned temp = number;
+        while (temp) {
+            if (thousands) {
+                result = "mille " + result;
             }
-            result = strHundreds + " " + result;
-         }
-         temp /= 1000; //Groupe de 3 chiffres suivant
-         thousands = 1; //On passe au milier (à modulariser ?)
-      }
-   }
-   number <= 1 ? result += "franc " : result += "francs "; //Accord pluriel
-   return result;
+            unsigned tensAndUnits = temp % 100;
+            if (not(thousands and tensAndUnits == 1))//Pas de "un mille"
+            {
+                result = getTensAndUnits(tensAndUnits) + result; //Gestion des dizaines et unités en bloc
+            }
+            
+            unsigned hundreds;
+            string strHundreds;
+            hundreds = (temp % 1000) / 100;
+            if (hundreds) {
+                strHundreds = getStringHundreds(hundreds);
+                if (not(tensAndUnits) and not(thousands) and hundreds != 1)//On accorde uniquement si rien ne suit
+                {
+                    strHundreds += "s"; //Accord du "cent"
+                }
+                result = strHundreds + " " + result;
+            }
+            temp /= 1000; //Groupe de 3 chiffres suivant
+            thousands = 1; //On passe au milier (à modulariser ?)
+        }
+    }
+    number <= 1 ? result += "franc " : result += "francs "; //Accord pluriel
+    return result;
 }
 
+/**
+ @brief Récupère la partie décimale et l'exprime en "Vaudois"
+ @param[in] number un entier compris entre 0 et 0 et 99.
+ @return une chaine de caractères indiquant en vaudois le nombre de centimes.
+ @details Exemples:
+ 30  -> "trente centimes"
+ 1 -> "un centime"
+*/
 string getStringDecimalPart(unsigned number) {
-   string result = getTensAndUnits(number);
-   result += number == 1 ? "centime " : "centimes"; //Accord pluriel
-   return result;
+    string result = getTensAndUnits(number);
+    result += number == 1 ? "centime" : "centimes"; //Accord pluriel
+    return result;
 }
 
 /**
@@ -201,34 +237,43 @@ string getStringDecimalPart(unsigned number) {
  @param[in] montant un réel compris entre 0 et 999999.99 CHF.
  @return une chaine de caractères indiquant en vaudois le prix
  en francs et centimes.
- @details Exemples:
+ @details Les décimales après la deuxième sont tronquées : en effet, on ne peut pas avoir une partie
+ de centime : on l'a entièrement ou on ne l'a pas
+ Exemples:
  12.30  -> "douze francs et trente centimes"
  200.01 -> "deux cents francs et un centime"
  180    -> "cent huitante francs"
  1.80   -> "un franc et huitante centimes"
  0.20   -> "vingt centimes"
+ 231.456 -> "deux cent trente et un francs et quarante cinq centimes"
  0      -> "zéro franc"
  */
 string montantEnVaudois(double montant) {
-   string result;
-   if (montant) {
-      int intPart = (int) montant;
-      double roundedDecimalPart = 100 * (montant - intPart) + 0.05; //Pour une partie décimale (mantisse) correctement arrondie
-      int decimalPart = (int) roundedDecimalPart; //Cast explicite de double à int, pour prévenir les warnings
-      result += intPart ? getStringIntPart(intPart) : ""; //Partie entière
-      result += (intPart and decimalPart) ? "et " : ""; //Connecteur
-      result += decimalPart ? getStringDecimalPart(decimalPart) : ""; //Partie décimale
-   } else {
-      result = "zero franc"; //Cas du zéro
-   }
-   return result;
+    const double montant_min = 0;
+    const double montant_max = 999999.99;
+    if (montant < montant_min or montant > montant_max)
+    {
+        return "Montant invalide ! ";
+    }
+    string result;
+    if (montant) {
+        unsigned intPart = (unsigned) montant;
+        double roundedDecimalPart = 100 * (montant - intPart) + 0.05; //Pour une partie décimale (mantisse) correctement arrondie
+        unsigned decimalPart = (int) roundedDecimalPart; //Cast explicite de double à int, pour prévenir les warnings
+        result += intPart ? getStringIntPart(intPart) : ""; //Partie entière
+        result += (intPart and decimalPart) ? "et " : ""; //Connecteur
+        result += decimalPart ? getStringDecimalPart(decimalPart) : ""; //Partie décimale
+    } else {
+        result = "zero franc"; //Cas du zéro
+    }
+    return result;
 }
 
 int main() {
-   double d;
-
-   while (cin >> d) {
-      cout << montantEnVaudois(d) << endl;
-   }
-   return 0;
+    double d;
+    
+    while (cin >> d) {
+        cout << montantEnVaudois(d) << endl;
+    }
+    return 0;
 }

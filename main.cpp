@@ -1,14 +1,18 @@
 /* ---------------------------
- Laboratoire : 6
- Fichier :     main.cpp
- Auteur(s) :
- Date :        28.11.2018
- 
- But :
- 
- Remarque(s) :
- 
- Compilateur : GNU GCC Compiler
+ Laboratoire   : Labo 6
+ Fichier       : main.cpp
+ Auteur(s)     : Dessaules Loïc, Reuteler Robin, Pande Rochana
+ Date          : 04.12.18
+ But           : L'utilisateur entre un nombre entre [0-9999.99] et le programme 
+                 retourne une chaine de caractères au format string contenant
+                 "en vaudois" le montant correspondant exprimé en francs et centimes.
+                 Donc septante, huitante et nonante pour 70, 80 et 90.
+ Remarque(s)   : Si l'utilisateur entre des centimes qui sont plus précis que le centième
+                 (ex: 73.429) nous décidons de tronquer les centimes au centième, nous
+                 aurons donc pour l'exemple 73.42. Nous avons choisi cette option car
+                 cela représente l'argent que nous avons en ce moment. Nous ne pouvons
+                 pas ajouter de l'argent de nul part, nous avons 73.42 chf mais pas 73.43 chf.
+ Compilateur   : MinGW-g++ 6.3.0
  --------------------------- */
 
 #include <iostream>
@@ -16,6 +20,13 @@
 
 using namespace std;
 
+/**
+ * @brief Retourne la correspondance en lettre, de l'unité (chiffre) passé en paramètre
+ * 
+ * @param[in] units L'unité en chiffre pour lequelle il faut une conversion en string
+ * @return L'unité voulu en lettre
+ * @details Dans le chiffre 324, l'unité est 4 et nous allons retourner "quatre"
+ */
 string getStringUnits(const int& units) {
    switch (units) {
       case 1:
@@ -42,6 +53,13 @@ string getStringUnits(const int& units) {
    }
 }
 
+/**
+ * @brief Retourne la correspondance en lettre, de la dizaine (chiffre) passé en paramètre
+ * 
+ * @param[in] tens La dizaine en chiffre pour lequelle il faut une conversion en string
+ * @return La dizaine voulu en lettre
+ * @details Dans le chiffre 324, la dzaine est 2 et nous allons retourner "vingt"
+ */
 string getStringTens(const int& tens) {
    switch (tens) {
       case 1:
@@ -67,6 +85,15 @@ string getStringTens(const int& tens) {
    }
 }
 
+/**
+ * @brief Retourne la correspondance en lettre, des chiffres de 11 à 16 passés en paramètre
+ * 
+ * @param[in] teens Les chiffres (11 à 16) pour lequelle il faut une conversion en string
+ * @return Le chiffre de 11 à 16 voulu en lettre
+ * @details Les chiffres de 11 à 16 sont "spéciaux", ils ne s'écrivent pas de la même
+ * manière que les autres (22 = vingt deux). 16 d'écrira donc comme "seize" et non
+ * "dix six", ceci est du aux règles de notre langue.
+ */
 string getStringTeens(const int& teens) {
    switch (teens) {
       case 11:

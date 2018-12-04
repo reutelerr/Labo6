@@ -8,10 +8,7 @@
                  "en vaudois" le montant correspondant exprimé en francs et centimes.
                  Donc septante, huitante et nonante pour 70, 80 et 90.
  Remarque(s)   : Si l'utilisateur entre des centimes qui sont plus précis que le centième
-                 (ex: 73.429) nous décidons de tronquer les centimes au centième, nous
-                 aurons donc pour l'exemple 73.42. Nous avons choisi cette option car
-                 cela représente l'argent que nous avons en ce moment. Nous ne pouvons
-                 pas ajouter de l'argent de nul part, nous avons 73.42 chf mais pas 73.43 chf.
+                 (ex: 73.429) nous arrondissons au centime le plus proche
  Compilateur   : MinGW-g++ 6.3.0
  --------------------------- */
 
@@ -237,8 +234,7 @@ string getStringDecimalPart(unsigned number) {
  @param[in] montant un réel compris entre 0 et 999999.99 CHF.
  @return une chaine de caractères indiquant en vaudois le prix
  en francs et centimes.
- @details Les décimales après la deuxième sont tronquées : en effet, on ne peut pas avoir une partie
- de centime : on l'a entièrement ou on ne l'a pas
+ @details Les décimales après la deuxième sont arrondies au centime le plus proche
  Exemples:
  12.30  -> "douze francs et trente centimes"
  200.01 -> "deux cents francs et un centime"
@@ -249,16 +245,17 @@ string getStringDecimalPart(unsigned number) {
  0      -> "zéro franc"
  */
 string montantEnVaudois(double montant) {
-    const double montant_min = 0;
-    const double montant_max = 999999.99;
-    if (montant < montant_min or montant > montant_max)
+    montant = round(montant*100)/100;
+    const double MONTANT_MIN = 0;
+    const double MONTANT_MAX = 999999.99;
+    if (montant < MONTANT_MIN or montant > MONTANT_MAX)
     {
         return "Montant invalide ! ";
     }
     string result;
     if (montant) {
         unsigned intPart = (unsigned) montant;
-        double roundedDecimalPart = 100 * (montant - intPart) + 0.05; //Pour une partie décimale (mantisse) correctement arrondie
+        double roundedDecimalPart = (montant - intPart)*100; //Pour une partie décimale (mantisse) correctement arrondie
         unsigned decimalPart = (int) roundedDecimalPart; //Cast explicite de double à int, pour prévenir les warnings
         result += intPart ? getStringIntPart(intPart) : ""; //Partie entière
         result += (intPart and decimalPart) ? "et " : ""; //Connecteur
@@ -268,6 +265,8 @@ string montantEnVaudois(double montant) {
     }
     return result;
 }
+
+
 
 int main() {
     double d;

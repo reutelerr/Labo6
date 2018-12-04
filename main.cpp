@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -255,7 +256,7 @@ string montantEnVaudois(double montant) {
     string result;
     if (montant) {
         unsigned intPart = (unsigned) montant;
-        double roundedDecimalPart = (montant - intPart)*100; //Pour une partie décimale (mantisse) correctement arrondie
+        double roundedDecimalPart = round((montant - intPart)*100); //Pour une partie décimale (mantisse) correctement arrondie
         unsigned decimalPart = (int) roundedDecimalPart; //Cast explicite de double à int, pour prévenir les warnings
         result += intPart ? getStringIntPart(intPart) : ""; //Partie entière
         result += (intPart and decimalPart) ? "et " : ""; //Connecteur

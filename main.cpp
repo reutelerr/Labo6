@@ -18,6 +18,15 @@
 
 using namespace std;
 
+const double MONTANT_MIN = 0;
+const double MONTANT_MAX = 999999.99;
+const string CURRENCY = "franc";
+const string CURRENCY_PLURAL = CURRENCY + "s";
+const string CURRENCY_CENTS = "centime";
+const string CURRENCY_CENTS_PLURAL = CURRENCY_CENTS + "s";
+// Le zero est traité via une variable et non dans les unités [1-9]
+const string ZERO = "zero"; 
+
 /**
  * @brief Retourne la correspondance en lettre, de l'unité (chiffre) passé en paramètre
  * 
@@ -183,7 +192,7 @@ string getStringIntPart(unsigned number) {
    string result;
 
    if (not(number)) {
-      result += "zero ";
+      result = result + ZERO + " ";
    } else {
       bool thousands = 0; //Somme-nous dans les milliers ?
       unsigned temp = number;
@@ -209,10 +218,13 @@ string getStringIntPart(unsigned number) {
             result = strHundreds + " " + result;
          }
          temp /= 1000; //Groupe de 3 chiffres suivant
-         thousands = 1; //On passe au milier (à modulariser ?)
+         thousands = 1; //On passe au milier
       }
    }
-   number <= 1 ? result += "franc " : result += "francs "; //Accord pluriel
+   
+   number <= 1 ? result += CURRENCY : result += CURRENCY_PLURAL; //Accord pluriel
+   result += " ";
+   
    return result;
 }
 
@@ -226,8 +238,19 @@ string getStringIntPart(unsigned number) {
  */
 string getStringDecimalPart(unsigned number) {
    string result = getTensAndUnits(number);
-   result += number == 1 ? "centime" : "centimes"; //Accord pluriel
+   result += number == 1 ? CURRENCY_CENTS : CURRENCY_CENTS_PLURAL; //Accord pluriel
    return result;
+}
+
+/**
+ * 
+ * @param INPUT The user input value as a double
+ * @param MIN_VALUE The minimum value accepted as a double
+ * @param MAX_VALUE The maximum value accepted as a double
+ * @return 
+ */
+bool isUserInputCorrect(const double& INPUT, const double& MIN_VALUE, const double& MAX_VALUE){
+   return INPUT >= MIN_VALUE && INPUT <= MAX_VALUE;
 }
 
 /**
@@ -246,12 +269,12 @@ string getStringDecimalPart(unsigned number) {
  0      -> "zéro franc"
  */
 string montantEnVaudois(double montant) {
-   montant = round(montant * 100) / 100;
-   const double MONTANT_MIN = 0;
-   const double MONTANT_MAX = 999999.99;
-   if (montant < MONTANT_MIN or montant > MONTANT_MAX) {
+   montant = round(montant * 100) / 100; // Le montant est arrondi au centime prêt
+   
+   if (!isUserInputCorrect(montant, MONTANT_MIN, MONTANT_MAX)) {
       return "Montant invalide ! ";
    }
+   
    string result;
    if (montant) {
       unsigned intPart = (unsigned) montant;
@@ -261,8 +284,9 @@ string montantEnVaudois(double montant) {
       result += (intPart and decimalPart) ? "et " : ""; //Connecteur
       result += decimalPart ? getStringDecimalPart(decimalPart) : ""; //Partie décimale
    } else {
-      result = "zero franc"; //Cas du zéro
+      result = ZERO + " " + CURRENCY; //Cas du zéro
    }
+   
    return result;
 }
 
